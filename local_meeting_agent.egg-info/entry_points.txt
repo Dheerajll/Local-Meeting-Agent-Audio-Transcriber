@@ -1,0 +1,2 @@
+[console_scripts]
+lma = lma.cli:main

@@ -1,0 +1,40 @@
+                   FFmpeg
+                      │
+                      ▼
+              Continuous PCM
+                      │
+                      ▼
+                Rolling Buffer
+                      │
+                      ▼
+                  Silero VAD
+                      │
+                      ▼
+            Recorder State Machine
+                      │
+        ┌─────────────┴─────────────┐
+        │                           │
+        ▼                           ▼
+  Recording Buffer           Chunk Metadata
+        │                           │
+        └─────────────┬─────────────┘
+                      ▼
+              Storage Manager
+                      │
+                      ▼
+                 Chunk Queue
+                      │
+                      ▼
+               Whisper Worker
+                      │
+                      ▼
+               Transcript Queue
+                      │
+                      ▼
+                Backend Upload
+                      │
+                      ▼
+                 Backend ACK
+                      │
+                      ▼
+                 Delete Audio

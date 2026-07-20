@@ -1,0 +1,5 @@
+mlx-whisper
+numpy
+torch
+silero-vad
+playwright

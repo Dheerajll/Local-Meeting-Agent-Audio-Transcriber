@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+lma/__init__.py
+lma/cli.py
+lma/paths.py
+lma/setup.py
+local_meeting_agent.egg-info/PKG-INFO
+local_meeting_agent.egg-info/SOURCES.txt
+local_meeting_agent.egg-info/dependency_links.txt
+local_meeting_agent.egg-info/entry_points.txt
+local_meeting_agent.egg-info/requires.txt
+local_meeting_agent.egg-info/top_level.txt

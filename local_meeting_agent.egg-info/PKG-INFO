@@ -1,0 +1,10 @@
+Metadata-Version: 2.4
+Name: local-meeting-agent
+Version: 0.1.0
+Summary: Local Meeting Agent
+Requires-Python: >=3.11
+Requires-Dist: mlx-whisper
+Requires-Dist: numpy
+Requires-Dist: torch
+Requires-Dist: silero-vad
+Requires-Dist: playwright
