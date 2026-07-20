@@ -61,3 +61,28 @@ class ChunkReason(Enum):
     HARD_LIMIT = "hard_limit"
 
     STREAM_ENDED = "stream_ended"
+
+
+#========================================#
+#New constants#
+
+# ---------- Audio ----------
+
+SAMPLE_RATE = 16_000
+
+CHANNELS = 1
+
+SAMPLE_WIDTH = 2
+
+FRAME_SAMPLES = 512
+
+FRAME_DURATION_MS = (
+    FRAME_SAMPLES * 1000
+) // SAMPLE_RATE
+
+FRAME_BYTES = (
+    FRAME_SAMPLES *
+    SAMPLE_WIDTH
+)
+
+READ_SIZE = 4096

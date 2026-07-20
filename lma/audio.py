@@ -68,7 +68,7 @@ class AudioRecorder:
     past the soft limit first".
     """
 
-    def __init__(self, publisher: ChunkPublisher, vad: VADIterator | None = None):
+    def __init__(self, publisher: ChunkPublisher[AudioChunk], vad: VADIterator | None = None):
         self.publisher = publisher
         self.device_manager = AudioDeviceManager()
 
