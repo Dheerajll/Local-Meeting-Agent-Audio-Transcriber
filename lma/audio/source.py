@@ -8,11 +8,7 @@ class AudioSource:
     Combines raw capture with timestamps.
     """
 
-    def __init__(
-        self,
-        capture: FFmpegCapture,
-        clock: AudioClock,
-    ):
+    def __init__(self,capture: FFmpegCapture,clock: AudioClock):
 
         self.capture = capture
         self.clock = clock
