@@ -1,6 +1,6 @@
-import numpy as np
-import torch
-from silero_vad import load_silero_vad, VADIterator
+import numpy as np #type:ignore
+import torch #type:ignore
+from silero_vad import load_silero_vad, VADIterator #type:ignore
 
 from lma.constants import (
     SAMPLE_RATE,
@@ -11,7 +11,7 @@ from lma.constants import (
 )
 from lma.schemas import PCMFrame
 
-from lma.audio_p.base import SpeechDetector
+from lma.audio.detector.base import SpeechDetector
 
 torch.set_num_threads(1)
 

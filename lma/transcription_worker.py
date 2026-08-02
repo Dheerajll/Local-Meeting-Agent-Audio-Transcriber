@@ -11,7 +11,7 @@ from queue import Empty, Queue
 
 from .constants import ChunkReason
 from .exceptions import TranscriptionError
-from .publisher import ChunkPublisher
+from .workers.publisher import ChunkPublisher
 from .schemas import AudioChunk, TranscriptChunk
 from .transcriber import average_confidence, transcribe_pcm
 from .worker import Worker

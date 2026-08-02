@@ -98,3 +98,5 @@ class FinalizedChunk:
     duration_ms: int
 
     overlap_ms: int
+
+    effective_duration_ms : int 

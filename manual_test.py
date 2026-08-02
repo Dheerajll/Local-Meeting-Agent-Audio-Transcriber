@@ -8,7 +8,7 @@ import wave
 from pathlib import Path
 
 from lma.audio import AudioRecorder
-from lma.publisher import ChunkPublisher
+from lma.workers.publisher import ChunkPublisher
 from lma.queues import transcription_queue
 
 OUT_DIR = Path("test_chunks")

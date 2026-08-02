@@ -18,7 +18,7 @@ class ChunkBuilder:
         chunk_id = self._next_chunk_id
         self._next_chunk_id += 1
 
-        end_ms = start_ms + chunk.duration_ms
+        end_ms = start_ms + chunk.effective_duration_ms
 
         return AudioChunk(
             chunk_id=chunk_id,

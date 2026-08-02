@@ -1,4 +1,4 @@
-from lma.audio_p.buffer import RollingAudioBuffer
+from lma.audio.buffer import RollingAudioBuffer
 from lma.constants import (
     SAMPLE_RATE,
     SAMPLE_WIDTH,
@@ -75,7 +75,8 @@ class ChunkBuffer:
         return FinalizedChunk(
             pcm_bytes = audio,
             duration_ms = duration_ms,
-            overlap_ms = overlap_ms
+            overlap_ms = overlap_ms,
+            effective_duration_ms= duration_ms - overlap_ms
         )
 
 

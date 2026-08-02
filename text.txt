@@ -38,3 +38,34 @@
                       │
                       ▼
                  Delete Audio
+
+
+
+lma/
+│
+├── audio/
+│   ├── capture.py
+│   ├── source.py
+│   ├── clock.py
+│   ├── detector/
+│   │   ├── base.py
+│   │   └── silero.py
+│   ├── recorder.py
+│   ├── buffer.py
+│   ├── chunk_buffer.py
+│   ├── chunk_builder.py
+│   └── device.py
+│
+├── transcription/
+│   ├── worker.py
+│   ├── model.py
+│   └── processor.py
+│
+├── workers/
+│   ├── base.py
+│   ├── publisher.py
+│   └── queue_worker.py
+│
+├── schemas.py
+├── constants.py
+└── exceptions.py

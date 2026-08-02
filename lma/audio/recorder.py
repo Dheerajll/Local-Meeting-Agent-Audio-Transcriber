@@ -1,11 +1,14 @@
-from lma.audio_p.base import SpeechDetector
-from lma.audio_p.chunk_buffer import ChunkBuffer
-from lma.audio_p.chunk_builder import ChunkBuilder
-from lma.publisher import ChunkPublisher
+from lma.audio.detector.base import SpeechDetector
+from lma.audio.chunk_buffer import ChunkBuffer
+from lma.audio.chunk_builder import ChunkBuilder
+from lma.workers.publisher import ChunkPublisher
 
 from lma.schemas import (AudioChunk,PCMFrame,)
 
-from lma.constants import (RecorderState,SpeechEvent,SOFT_LIMIT_MS,HARD_LIMIT_MS,FINALIZE_SILENCE_MS)
+from lma.constants import (RecorderState,SpeechEvent,
+SOFT_LIMIT_MS,HARD_LIMIT_MS,FINALIZE_SILENCE_MS,
+CHANNELS,SAMPLE_RATE,ChunkReason
+)
 
 
 class AudioRecorder:
@@ -95,6 +98,48 @@ class AudioRecorder:
 
                 print(f"⏳ Waiting for resume...")
 
+    def _finalize(self,*,reason: ChunkReason,forced: bool) -> None:
+
+        finalized = self.chunk_buffer.finalize()
+
+        chunk = self.chunk_builder.build(
+            chunk=finalized,
+            start_ms=self.chunk_start_ms,
+            reason=reason,
+            forced=forced,
+            sample_rate=SAMPLE_RATE,
+            channels=CHANNELS,
+        )
+
+        self.publisher.publish(chunk)
+
+        print(f"💾 Published chunk {chunk.chunk_id}")
+
+        #
+        # Reset recorder state
+        #
+
+        self.state = RecorderState.IDLE
+
+        self.over_soft_limit = False
+
+        self.last_speech_timestamp = 0
+
+        #
+        # If we hit the hard limit while
+        # the speaker is still talking,
+        # immediately continue recording.
+        #
+
+        if forced and self.is_speaking:
+
+            self.chunk_buffer.start()
+
+            self.chunk_start_ms = chunk.end_ms
+
+            self.state = RecorderState.RECORDING
+
+            print("▶️ Continuing after hard limit")
 
     def _update_state(self,frame: PCMFrame,):
 
@@ -104,16 +149,16 @@ class AudioRecorder:
         duration = self.chunk_buffer.duration_ms()
 
         if (duration >= SOFT_LIMIT_MS and not self.over_soft_limit):
-
             self.over_soft_limit = True
-
             print("⏱ Soft limit reached")
 
+
+
+
+
         if duration >= HARD_LIMIT_MS:
-
             print("⚠ Hard limit reached")
-
-            # next commit
+            self._finalize(reason=ChunkReason.HARD_LIMIT,forced=True)
             return
 
         if self.state == RecorderState.WAITING_FOR_RESUME:
@@ -124,4 +169,7 @@ class AudioRecorder:
 
                 print("🔇 Finalize on silence")
 
-                # next commit
+                reason = (ChunkReason.SOFT_LIMIT if self.over_soft_limit else ChunkReason.NATURAL_SILENCE)
+
+                self._finalize(reason=reason,forced=False)
+                return

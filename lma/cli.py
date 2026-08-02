@@ -3,8 +3,8 @@ import sys
 from .setup import run_setup
 from .auth import login
 from .browser import BrowserManager
-from lma.audio import AudioRecorder
-from lma.publisher import ChunkPublisher
+from lma.audio.recorder import AudioRecorder
+from lma.workers.publisher import ChunkPublisher
 from lma.queues import transcription_queue
 def main():
 
