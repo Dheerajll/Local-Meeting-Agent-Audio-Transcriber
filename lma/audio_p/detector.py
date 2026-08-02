@@ -9,8 +9,9 @@ from lma.constants import (
     VAD_THRESHOLD,
     SpeechEvent,
 )
+from lma.schemas import PCMFrame
 
-from .base import SpeechDetector
+from lma.audio_p.base import SpeechDetector
 
 torch.set_num_threads(1)
 
@@ -32,9 +33,9 @@ class SileroDetector(SpeechDetector):
             speech_pad_ms=VAD_SPEECH_PAD_MS,
         )
 
-    def process(self,pcm: bytes,) -> SpeechEvent | None:
+    def process(self,frame: PCMFrame,) -> SpeechEvent | None:
 
-        audio = (np.frombuffer(pcm,dtype=np.int16).astype(np.float32)/ 32768.0)
+        audio = (np.frombuffer(frame.data,dtype=np.int16).astype(np.float32)/ 32768.0)
 
         result = self._vad(
             torch.from_numpy(audio),

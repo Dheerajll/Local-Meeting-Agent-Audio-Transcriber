@@ -1,5 +1,5 @@
 import subprocess
-
+from lma.exceptions import AudioDeviceError
 
 class AudioDeviceManager:
 
@@ -21,9 +21,30 @@ class AudioDeviceManager:
 
         return result.stdout.strip()
 
+    def get_devices(self):
 
+        result = subprocess.run(
+            [
+                "SwitchAudioSource",
+                "-a"
+            ],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        return [
+            x.strip()
+            for x in result.stdout.splitlines()
+        ]
 
     def switch_to(self, device_name):
+        available = self.get_devices()
+
+        if device_name not in available:
+            raise AudioDeviceError(
+            f"{device_name} not found"
+        )
 
         subprocess.run(
             [

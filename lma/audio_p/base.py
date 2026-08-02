@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from lma.constants import SpeechEvent
-
+from lma.schemas import PCMFrame
 
 class SpeechDetector(ABC):
     """
@@ -12,7 +12,7 @@ class SpeechDetector(ABC):
     """
 
     @abstractmethod
-    def process(self, pcm: bytes) -> SpeechEvent | None:
+    def process(self, frame: PCMFrame) -> SpeechEvent | None:
         """
         Process one PCM frame.
 
