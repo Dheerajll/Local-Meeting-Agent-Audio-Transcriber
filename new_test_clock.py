@@ -23,8 +23,7 @@ source.start()
 
 try:
     for frame in source.frames():
-        print("its working.")
         recorder.process(frame)
-
+ 
 finally:
     source.stop()

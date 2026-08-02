@@ -5,7 +5,7 @@ from lma.publisher import ChunkPublisher
 
 from lma.schemas import (AudioChunk,PCMFrame,)
 
-from lma.constants import RecorderState
+from lma.constants import (RecorderState,SpeechEvent,SOFT_LIMIT_MS,HARD_LIMIT_MS,FINALIZE_SILENCE_MS)
 
 
 class AudioRecorder:
@@ -57,18 +57,71 @@ class AudioRecorder:
 
         self._update_state(frame)
 
-    def _handle_event(self,event,frame: PCMFrame) -> None:
-        """
-        Handle START / END events.
 
-        Implemented in the next commit.
-        """
-        pass
 
-    def _update_state(self,frame: PCMFrame) -> None:
-        """
-        Update recorder state.
+    def _handle_event(self,event: SpeechEvent | None,frame: PCMFrame) -> None:
 
-        Implemented in the next commit.
-        """
-        pass
+        if event is None:
+            return
+        if event == SpeechEvent.START:
+
+            self.is_speaking = True
+            self.last_speech_timestamp = frame.timestamp_ms
+
+            if self.state == RecorderState.IDLE:
+                self.chunk_buffer.start()
+                self.chunk_start_ms = frame.timestamp_ms
+                self.over_soft_limit = False
+
+                self.state = RecorderState.RECORDING
+
+                print(f"🗣️ Chunk started @ {frame.timestamp_ms}ms")
+
+            elif self.state == RecorderState.WAITING_FOR_RESUME:
+
+                self.state = RecorderState.RECORDING
+                print("▶️ Speech resumed")
+            return
+
+        if event == SpeechEvent.END:
+
+            self.is_speaking = False
+
+            self.last_speech_timestamp = frame.timestamp_ms
+
+            if self.state == RecorderState.RECORDING:
+
+                self.state = RecorderState.WAITING_FOR_RESUME
+
+                print(f"⏳ Waiting for resume...")
+
+
+    def _update_state(self,frame: PCMFrame,):
+
+        if self.state == RecorderState.IDLE:
+            return
+
+        duration = self.chunk_buffer.duration_ms()
+
+        if (duration >= SOFT_LIMIT_MS and not self.over_soft_limit):
+
+            self.over_soft_limit = True
+
+            print("⏱ Soft limit reached")
+
+        if duration >= HARD_LIMIT_MS:
+
+            print("⚠ Hard limit reached")
+
+            # next commit
+            return
+
+        if self.state == RecorderState.WAITING_FOR_RESUME:
+
+            silence = (frame.timestamp_ms-self.last_speech_timestamp)
+
+            if silence >= FINALIZE_SILENCE_MS:
+
+                print("🔇 Finalize on silence")
+
+                # next commit
