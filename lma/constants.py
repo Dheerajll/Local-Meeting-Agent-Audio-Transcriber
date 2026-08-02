@@ -63,6 +63,11 @@ class ChunkReason(Enum):
     STREAM_ENDED = "stream_ended"
 
 
+class SpeechEvent(Enum):
+    START = "start"
+    END = "end"
+
+
 #========================================#
 #New constants#
 

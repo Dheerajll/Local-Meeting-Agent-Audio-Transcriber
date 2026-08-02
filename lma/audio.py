@@ -170,10 +170,10 @@ class AudioRecorder:
         if result:
             if "start" in result:
                 self.is_speaking = True
-                print("🎙 VAD: speech detected")
+                print(" VAD: speech detected")
             elif "end" in result:
                 self.is_speaking = False
-                print("🤫 VAD: silence detected")
+                print(" VAD: silence detected")
 
         if self.state == RecorderState.IDLE:
             if self.is_speaking:
@@ -220,7 +220,7 @@ class AudioRecorder:
             self._finalize(reason=reason, forced=False)
         elif silence_bytes >= RESUME_WINDOW_BYTES:
             if self.state != RecorderState.WAITING_FOR_RESUME:
-                print(f"⏳ {silence_bytes // BYTES_PER_MS}ms silence — waiting to see if speaker resumes")
+                print(f" {silence_bytes // BYTES_PER_MS}ms silence — waiting to see if speaker resumes")
             self.state = RecorderState.WAITING_FOR_RESUME
         # else: short pause — stay in RECORDING, keep buffering through it
 
@@ -237,7 +237,7 @@ class AudioRecorder:
         end_ms = self.chunk_start_ms + duration_ms
 
         print(
-        f"💾 Chunk {self.chunk_id} published | reason={reason.value} "
+        f"Chunk {self.chunk_id} published | reason={reason.value} "
         f"forced={forced} duration={duration_ms}ms "
         f"[{self.chunk_start_ms}ms -> {end_ms}ms]"
     )

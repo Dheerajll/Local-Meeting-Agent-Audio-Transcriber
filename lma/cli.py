@@ -3,18 +3,19 @@ import sys
 from .setup import run_setup
 from .auth import login
 from .browser import BrowserManager
-from .audio import AudioRecorder
-
+from lma.audio import AudioRecorder
+from lma.publisher import ChunkPublisher
+from lma.queues import transcription_queue
 def main():
 
     if len(sys.argv) < 2:
 
         print(
             """
-Usage:
-    lma setup
-    lma login
-    lma join <meeting_url>
+        Usage:
+        lma setup
+        lma login
+        lma join <meeting_url>
             """
         )
 
@@ -25,12 +26,10 @@ Usage:
 
 
     if command == "setup":
-
         run_setup()
 
 
     elif command == "login":
-
         login()
 
 
@@ -71,7 +70,7 @@ Usage:
     elif command == "record":
 
 
-        recorder = AudioRecorder()
+        recorder = AudioRecorder(ChunkPublisher(transcription_queue))
 
         try:
             recorder.start()

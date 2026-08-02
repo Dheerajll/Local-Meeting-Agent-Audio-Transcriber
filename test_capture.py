@@ -1,4 +1,4 @@
-from lma.audio.capture import FFmpegCapture
+from lma.audio_p.capture import FFmpegCapture
 
 
 capture = FFmpegCapture(

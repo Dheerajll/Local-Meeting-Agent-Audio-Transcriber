@@ -73,3 +73,15 @@ class MeetingSession:
     started_at: datetime
 
     browser_profile: Path
+
+@dataclass(slots=True, frozen=True)
+class PCMFrame:
+    """
+    One fixed-size PCM frame produced by FFmpegCapture.
+
+    This is the smallest unit flowing through the audio pipeline.
+    """
+
+    data: bytes
+
+    timestamp_ms: int

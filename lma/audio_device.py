@@ -3,9 +3,7 @@ import subprocess
 
 class AudioDeviceManager:
 
-
     def __init__(self):
-
         self.previous_device = None
 
 
@@ -37,29 +35,15 @@ class AudioDeviceManager:
         )
 
 
-    def start_recording_mode(
-        self,
-        recording_device="Local meeting agent output"
-    ):
+    def start_recording_mode(self,recording_device="Local meeting agent output"):
 
-        self.previous_device = (
-            self.get_current_device()
-        )
+        self.previous_device = (self.get_current_device())
 
+        print(f"Previous device: {self.previous_device}")
 
-        print(
-            f"Previous device: {self.previous_device}"
-        )
+        print(f"Switching to {recording_device}")
 
-
-        print(
-            f"Switching to {recording_device}"
-        )
-
-
-        self.switch_to(
-            recording_device
-        )
+        self.switch_to(recording_device)
 
 
 
