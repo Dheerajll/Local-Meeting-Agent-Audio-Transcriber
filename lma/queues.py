@@ -1,9 +1,6 @@
 from queue import Queue
 
-from .schemas import (
-    AudioChunk,
-    TranscriptChunk
-)
+from lma.schemas import (AudioChunk,TranscriptChunk)
 
 
 transcription_queue: Queue[AudioChunk] = Queue()

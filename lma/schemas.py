@@ -85,3 +85,16 @@ class PCMFrame:
     data: bytes
 
     timestamp_ms: int
+
+
+@dataclass(slots=True, frozen=True)
+class FinalizedChunk:
+    """
+    Immutable snapshot returned by ChunkBuffer when a chunk is finalized.
+    """
+
+    pcm_bytes: bytes
+
+    duration_ms: int
+
+    overlap_ms: int

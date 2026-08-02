@@ -4,7 +4,7 @@ from lma.constants import (
     SAMPLE_WIDTH,
     OVERLAP_MS,
 )
-
+from lma.schemas import FinalizedChunk
 
 BYTES_PER_MS = (SAMPLE_RATE * SAMPLE_WIDTH) // 1000
 
@@ -53,7 +53,7 @@ class ChunkBuffer:
         return (silence_bytes//BYTES_PER_MS)
 
 
-    def finalize(self) -> bytes:
+    def finalize(self) -> FinalizedChunk:
         """
         Returns finished chunk audio and updates overlap.
         """
@@ -63,14 +63,20 @@ class ChunkBuffer:
 
         overlap = self.current.tail(self.overlap_bytes)
 
+        overlap_ms = len(overlap) // BYTES_PER_MS
 
         self.previous_overlap.replace(overlap)
 
+        duration_ms = len(audio) // BYTES_PER_MS
 
         self.current.clear()
 
 
-        return audio
+        return FinalizedChunk(
+            pcm_bytes = audio,
+            duration_ms = duration_ms,
+            overlap_ms = overlap_ms
+        )
 
 
     def clear(self):
