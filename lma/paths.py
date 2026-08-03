@@ -50,7 +50,7 @@ BROWSER_PROFILE_DIR = (
 
 # For session dirs
 
-SESSIONS = (
+SESSIONS_DIR = (
     APP_SUPPORT_DIR
     / "sessions"
 )
@@ -68,35 +68,35 @@ def ensure_directories():
         exist_ok=True
     )
 
-    SESSIONS.mkdir(
+    SESSIONS_DIR.mkdir(
         parents=True,
         exist_ok=True
     )
 
 
-def create_session_dir():
+def create_session_dir(session_id:str|None = None)->SessionPaths:
 
     timestamp = datetime.now().strftime(
-        "%Y%m%d"
+        "%Y%m%d_%H%M"
     )
 
-    MEETINGS = (
-        SESSIONS /
-        f"meeting_{timestamp}"
+    meetings_dir = (
+        SESSIONS_DIR /
+        f"meeting_{timestamp}_{session_id}"
     )
-    AUDIO = (MEETINGS) / "audio"
-    TRANSCRIPT = (MEETINGS) / "transcripts"
-    LOGS = (MEETINGS) / "logs"
+    audio_dir = (meetings_dir) / "audio"
+    transcripts_dir = (meetings_dir) / "transcripts"
+    logs_dir = (meetings_dir) / "logs"
 
-    MEETINGS.mkdir(
+    meetings_dir.mkdir(
         parents=True,
         exist_ok=True
     )
-    AUDIO.mkdir(parents=True,exist_ok=True)
-    TRANSCRIPT.mkdir(parents=True,exist_ok=True)
-    LOGS.mkdir(parents=True,exist_ok=True)
+    audio_dir.mkdir(parents=True,exist_ok=True)
+    transcripts_dir.mkdir(parents=True,exist_ok=True)
+    logs_dir.mkdir(parents=True,exist_ok=True)
 
-    return SessionPaths(root=MEETINGS,audio=AUDIO,transcripts=TRANSCRIPT,logs=LOGS)
+    return SessionPaths(root=meetings_dir,audio=audio_dir,transcripts=transcripts_dir,logs=logs_dir)
 
 # Main application cache
 

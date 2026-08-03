@@ -15,7 +15,7 @@ chunk = AudioChunk(
     reason=ChunkReason.NATURAL_SILENCE,
     forced=False,
 )
-session = create_session_dir()
+session = create_session_dir("01")
 writer = WavWriter(Path(session.audio))
 
 path = writer.write(chunk)

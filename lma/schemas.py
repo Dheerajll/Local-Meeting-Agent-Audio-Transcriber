@@ -53,13 +53,6 @@ class TranscriptChunk:
 
     forced: bool
 
-    metadata: dict = field(
-        default_factory=dict
-    )
-
-    created_at: datetime = field(
-        default_factory=datetime.utcnow
-    )
 
 
 

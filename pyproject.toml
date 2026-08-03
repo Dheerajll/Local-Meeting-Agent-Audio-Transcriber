@@ -6,6 +6,7 @@ requires-python = ">=3.11"
 
 dependencies = [
     "mlx-whisper",
+    "mlx",
     "numpy",
     "torch",
     "silero-vad",

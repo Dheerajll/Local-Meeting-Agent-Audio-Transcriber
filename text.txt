@@ -69,3 +69,99 @@ lma/
 ├── schemas.py
 ├── constants.py
 └── exceptions.py
+
+
+Meeting Audio
+      │
+      ▼
+AudioRecorder
+      │
+      ▼
+AudioChunk Queue
+      │
+      ▼
+TranscriptionWorker
+      │
+      ▼
+TranscriptChunk Queue
+      │
+      ▼
+DiarizationWorker
+      │
+      ▼
+SpeakerTranscript Queue
+      │
+      ▼
+Cleaning / Translation Worker
+      │
+      ▼
+Embedding Worker
+      │
+      ▼
+Database + FAISS
+
+
+
+lma/
+│
+├── cli.py
+├── constants.py
+├── schemas.py
+├── exceptions.py
+│
+├── audio/
+│   ├── __init__.py
+│   │
+│   ├── recorder.py
+│   ├── chunk_buffer.py
+│   ├── chunk_builder.py
+│   ├── buffer.py
+│   ├── source.py
+│   ├── capture.py
+│   ├── clock.py
+│   ├── audio_device.py
+│   ├── wav_writer.py          # ← next
+│   │
+│   └── detector/
+│       ├── __init__.py
+│       ├── base.py
+│       └── silero.py
+│
+├── transcription/
+│   ├── __init__.py
+│   │
+│   ├── worker.py              # ← next
+│   ├── manager.py             # model lifecycle
+│   ├── cache.py               # locate HF snapshot
+│   ├── factory.py             # build/load model
+│   ├── whisper.py             # MLX Whisper wrapper
+│   └── exceptions.py
+│
+├── diarization/
+│   ├── __init__.py
+│   ├── worker.py
+│   ├── base.py
+│   └── pyannote.py            # or whisperx later
+│
+├── networking/
+│   ├── __init__.py
+│   ├── backend.py
+│   ├── uploader.py
+│   └── retry.py
+│
+├── browser/
+│   ├── __init__.py
+│   ├── login.py
+│   ├── meet.py
+│   └── profile.py
+│
+├── workers/
+│   ├── __init__.py
+│   ├── worker.py              # generic Worker base
+│   └── publisher.py
+│
+└── setup/
+    ├── __init__.py
+    ├── dependencies.py
+    ├── login.py
+    └── audio.py
