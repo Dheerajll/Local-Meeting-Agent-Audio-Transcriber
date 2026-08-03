@@ -25,7 +25,7 @@ def _find_snapshot(snapshots_dir:Path,model_name:str) -> Path:
     #
     return snapshots[-1]
 
-def get_model_path(model_name: str) -> Path:
+def get_model_snapshot_path(model_name: str) -> Path:
     """
     Returns the local snapshot directory for a Hugging Face model.
 

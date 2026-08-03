@@ -2,7 +2,7 @@ import mlx.core as mx
 
 from mlx_whisper.load_models import load_model
 
-from lma.transcription.cache import get_model_path
+from lma.transcription.cache import get_model_snapshot_path
 
 
 def create_whisper_model(model_name: str):
@@ -13,7 +13,7 @@ def create_whisper_model(model_name: str):
     and can then be reused for multiple transcription requests.
     """
 
-    model_path = get_model_path(model_name)
+    model_path = get_model_snapshot_path(model_name)
 
     print(f"Loading Whisper model from: {model_path}")
 

@@ -1,14 +1,29 @@
-from lma.transcription.factory import create_whisper_model
+from pathlib import Path
+
+from lma.constants import ChunkReason
+from lma.schemas import TranscriptChunk
+from lma.transcription.transcript_writer import TranscriptWriter
 
 
-MODEL_NAME = "mlx-community/whisper-large-v3-mlx"
+output_dir = Path("test_transcripts")
 
+writer = TranscriptWriter(output_dir)
 
-model = create_whisper_model(MODEL_NAME)
+transcript = TranscriptChunk(
+    chunk_id=1,
+    raw_text="Hello everyone, let's start the meeting.",
+    confidence=0.94,
+    language="en",
+    start_ms=1200,
+    end_ms=4800,
+    reason=ChunkReason.NATURAL_SILENCE,
+    forced=False,
+)
+
+path = writer.write(transcript)
+
+print("Created:", path)
+print("Exists:", path.exists())
 
 print()
-print("Model type:")
-print(type(model))
-
-print()
-print("Model loaded successfully")
+print(path.read_text(encoding="utf-8"))
