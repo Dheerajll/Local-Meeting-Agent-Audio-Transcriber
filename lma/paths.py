@@ -1,7 +1,7 @@
 from pathlib import Path
 import platform
 from  datetime import datetime
-
+from lma.schemas import SessionPaths
 APP_NAME = "local-meeting-agent"
 
 def get_cache_dir():
@@ -48,11 +48,11 @@ BROWSER_PROFILE_DIR = (
 )
 
 
-# For recording dirs
+# For session dirs
 
-RECORDINGS_DIR = (
+SESSIONS = (
     APP_SUPPORT_DIR
-    / "recordings"
+    / "sessions"
 )
 
 
@@ -68,7 +68,7 @@ def ensure_directories():
         exist_ok=True
     )
 
-    RECORDINGS_DIR.mkdir(
+    SESSIONS.mkdir(
         parents=True,
         exist_ok=True
     )
@@ -77,20 +77,26 @@ def ensure_directories():
 def create_session_dir():
 
     timestamp = datetime.now().strftime(
-        "%Y%m%d_%H%M%S"
+        "%Y%m%d"
     )
 
-    session = (
-        RECORDINGS_DIR /
+    MEETINGS = (
+        SESSIONS /
         f"meeting_{timestamp}"
     )
+    AUDIO = (MEETINGS) / "audio"
+    TRANSCRIPT = (MEETINGS) / "transcripts"
+    LOGS = (MEETINGS) / "logs"
 
-    session.mkdir(
+    MEETINGS.mkdir(
         parents=True,
         exist_ok=True
     )
+    AUDIO.mkdir(parents=True,exist_ok=True)
+    TRANSCRIPT.mkdir(parents=True,exist_ok=True)
+    LOGS.mkdir(parents=True,exist_ok=True)
 
-    return session
+    return SessionPaths(root=MEETINGS,audio=AUDIO,transcripts=TRANSCRIPT,logs=LOGS)
 
 # Main application cache
 

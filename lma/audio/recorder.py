@@ -7,7 +7,7 @@ from lma.schemas import (AudioChunk,PCMFrame,)
 
 from lma.constants import (RecorderState,SpeechEvent,
 SOFT_LIMIT_MS,HARD_LIMIT_MS,FINALIZE_SILENCE_MS,
-CHANNELS,SAMPLE_RATE,ChunkReason
+CHANNELS,SAMPLE_RATE,ChunkReason,FRAME_DURATION_MS
 )
 
 
@@ -73,7 +73,7 @@ class AudioRecorder:
 
             if self.state == RecorderState.IDLE:
                 self.chunk_buffer.start()
-                self.chunk_start_ms = frame.timestamp_ms
+                self.chunk_start_ms = max(0,frame.timestamp_ms - FRAME_DURATION_MS)
                 self.over_soft_limit = False
 
                 self.state = RecorderState.RECORDING

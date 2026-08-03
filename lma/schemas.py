@@ -100,3 +100,15 @@ class FinalizedChunk:
     overlap_ms: int
 
     effective_duration_ms : int 
+
+
+@dataclass(slots=True)
+class SessionPaths:
+
+    root: Path
+
+    audio: Path
+
+    transcripts: Path
+
+    logs: Path
