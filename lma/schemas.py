@@ -105,3 +105,10 @@ class SessionPaths:
     transcripts: Path
 
     logs: Path
+
+
+@dataclass(slots=True)
+class SpeakerSegment:
+    start_ms: int
+    end_ms: int
+    speaker: str

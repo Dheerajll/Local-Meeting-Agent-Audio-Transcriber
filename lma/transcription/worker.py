@@ -119,10 +119,11 @@ class TranscriptionWorker:
                 )
 
             finally:
-
+                '''
                 if wav_path is not None:
                     self.wav_writer.delete(
                         wav_path
                     )
+                '''
 
                 self.input_queue.task_done()
