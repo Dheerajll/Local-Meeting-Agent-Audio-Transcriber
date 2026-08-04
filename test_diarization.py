@@ -5,6 +5,7 @@ from pyannote.audio import Pipeline
 
 AUDIO_FILE = (
     Path(__file__).parent
+    / "test_chunks"
     / "chunk_005.wav"
 )
 
