@@ -214,6 +214,47 @@ class WordAligner:
 
                     break
 
+            # ----------------------------------------------------
+            # FALLBACK
+            #
+            # The word's midpoint didn't land inside any
+            # diarization segment (usually because it's a
+            # pause/gap between turns, not real silence).
+            # Instead of dropping the word, assign it to
+            # whichever segment is closest in time.
+            # ----------------------------------------------------
+
+            if word["speaker"] is not None:
+                continue
+
+            best_speaker = None
+            best_distance = None
+
+            for (
+                speaker_start_ms,
+                speaker_end_ms,
+                speaker_id,
+            ) in diarization_segments:
+
+                # distance from midpoint to this segment
+                # (0 if midpoint is inside it, which
+                # shouldn't happen here since we already
+                # checked that above)
+                if midpoint < speaker_start_ms:
+                    distance = speaker_start_ms - midpoint
+                elif midpoint >= speaker_end_ms:
+                    distance = midpoint - speaker_end_ms
+                else:
+                    distance = 0
+
+                if (
+                    best_distance is None
+                    or distance < best_distance
+                ):
+                    best_distance = distance
+                    best_speaker = speaker_id
+
+            word["speaker"] = best_speaker
     # ========================================================
     # FIND SPEAKER TRANSITIONS
     # ========================================================

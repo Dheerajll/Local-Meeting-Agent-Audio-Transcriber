@@ -115,7 +115,9 @@ class SpeakerSegment:
 
 
 
+
 @dataclass
 class GlobalSpeaker:
     speaker_id: int
     embedding: np.ndarray
+    embedding_count: int = 1
