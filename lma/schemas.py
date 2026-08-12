@@ -5,7 +5,7 @@ from typing import Optional
 
 from .constants import ChunkReason
 
-
+import numpy as np
 
 @dataclass(slots=True)
 class AudioChunk:
@@ -112,3 +112,10 @@ class SpeakerSegment:
     start_ms: int
     end_ms: int
     speaker: str
+
+
+
+@dataclass
+class GlobalSpeaker:
+    speaker_id: int
+    embedding: np.ndarray

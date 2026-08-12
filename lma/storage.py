@@ -2,9 +2,7 @@ import json
 import shutil
 from datetime import datetime
 from pathlib import Path
-from .paths import (
-    create_session_dir
-)
+from .paths import (create_session_dir)
 
 
 
@@ -17,10 +15,7 @@ class StorageManager:
             create_session_dir()
         )
 
-        self.chunks_dir = (
-            self.session_dir /
-            "chunks"
-        )
+        self.chunks_dir = (self.session_dir / "chunks")
 
 
         self.chunks_dir.mkdir(
@@ -28,29 +23,17 @@ class StorageManager:
         )
 
 
-        self.metadata_file = (
-            self.session_dir /
-            "chunks.json"
-        )
+        self.metadata_file = (self.session_dir / "chunks.json")
 
 
         self.metadata = []
 
 
 
-    def save_chunk(
-        self,
-        wav_path,
-        reason,
-        forced,
-        duration
-    ):
+    def save_chunk(self,wav_path,reason,forced,duration):
 
 
-        chunk_id = (
-            len(self.metadata)
-            + 1
-        )
+        chunk_id = (len(self.metadata)+1)
 
 
         new_name = (
