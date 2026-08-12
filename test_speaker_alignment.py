@@ -10,7 +10,7 @@ from lma.transcription.cache import get_model_snapshot_path
 # Configuration
 # ---------------------------------------------------------
 
-AUDIO_FILE = (Path(__file__).parent/ "test_chunks"/ "chunk_005.wav")
+AUDIO_FILE = (Path(__file__).parent/ "test_chunks"/ "chunk_01.wav")
 
 WHISPER_MODEL = ("mlx-community/whisper-large-v3-mlx")
 
@@ -60,7 +60,7 @@ def main():
     whisper_result = transcribe(
         str(AUDIO_FILE),
         path_or_hf_repo=str(snapshot_path),
-        language="ne",
+        language="en",
         temperature=0.0,
         condition_on_previous_text=True,
     )

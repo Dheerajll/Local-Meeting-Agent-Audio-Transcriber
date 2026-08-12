@@ -1,6 +1,6 @@
 import os
 
-from huggingface_hub import snapshot_download
+from huggingface_hub import snapshot_download #type:ignore
 
 from .paths import HF_CACHE_DIR
 

@@ -5,7 +5,7 @@ from typing import Optional
 
 from .constants import ChunkReason
 
-import numpy as np
+import numpy as np #type:ignore
 
 @dataclass(slots=True)
 class AudioChunk:

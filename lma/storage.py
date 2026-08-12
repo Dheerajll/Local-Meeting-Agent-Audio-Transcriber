@@ -15,7 +15,7 @@ class StorageManager:
             create_session_dir()
         )
 
-        self.chunks_dir = (self.session_dir / "chunks")
+        self.chunks_dir = (self.session_dir / "chunks") #type:ignore
 
 
         self.chunks_dir.mkdir(
@@ -23,7 +23,7 @@ class StorageManager:
         )
 
 
-        self.metadata_file = (self.session_dir / "chunks.json")
+        self.metadata_file = (self.session_dir / "chunks.json") #type:ignore
 
 
         self.metadata = []

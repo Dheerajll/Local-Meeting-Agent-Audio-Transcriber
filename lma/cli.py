@@ -69,7 +69,7 @@ def main():
     
     elif command == "record":
 
-
+        '''
         recorder = AudioRecorder(ChunkPublisher(transcription_queue))
 
         try:
@@ -78,7 +78,7 @@ def main():
         except KeyboardInterrupt:
 
             recorder.stop()
-
+        '''
 
     else:
 
