@@ -15,7 +15,7 @@ from lma.audio.capture import FFmpegCapture
 from lma.audio.clock import AudioClock
 
 from lma.audio.wav_writer import WavWriter
-from lma.transcription.transcriber import WhisperTranscriber
+from lma.transcription.whisper_transcriber import WhisperTranscriber
 from lma.transcription.transcript_writer import TranscriptWriter
 from lma.transcription.worker import TranscriptionWorker
 from lma.transcription.cache import get_model_snapshot_path

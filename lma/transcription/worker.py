@@ -5,7 +5,7 @@ from threading import Thread, Event
 from lma.schemas import AudioChunk
 
 from lma.audio.wav_writer import WavWriter
-from lma.transcription.transcriber import WhisperTranscriber
+from lma.transcription.whisper_transcriber import WhisperTranscriber
 from lma.transcription.transcript_writer import TranscriptWriter
 
 

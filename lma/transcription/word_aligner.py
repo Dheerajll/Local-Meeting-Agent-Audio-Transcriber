@@ -11,8 +11,6 @@ class AlignedWord:
 
 class WordAligner:
 
-    # Maximum distance between a diarization transition
-    # and a Whisper word boundary that we will accept.
     MAX_BOUNDARY_DISTANCE_MS = 500
 
     def align(
@@ -21,101 +19,52 @@ class WordAligner:
         diarization_segments: list[tuple[int, int, int]],
     ) -> list[AlignedWord]:
 
-        words = self._extract_words(
-            whisper_result
-        )
+        words = self._extract_words(whisper_result)
 
         if not words:
             return []
 
-        # ----------------------------------------------------
-        # STEP 1
-        #
-        # Baseline assignment using word midpoint.
-        # ----------------------------------------------------
-
+        # Initial speaker assignment using word midpoint.
         self._assign_words_from_diarization(
             words,
             diarization_segments,
         )
 
-        # ----------------------------------------------------
-        # STEP 2
-        #
-        # Find speaker transitions.
-        # ----------------------------------------------------
-
+        # Find diarization speaker transitions.
         transitions = self._find_transitions(
             diarization_segments
         )
 
-        # ----------------------------------------------------
-        # STEP 3
-        #
-        # Refine ownership around every transition.
-        # ----------------------------------------------------
-
-        refined_transitions = (
-            self._analyze_transitions(
-                words,
-                transitions,
-            )
+        # Match each transition to the closest
+        # Whisper word boundary.
+        refined_transitions = self._analyze_transitions(
+            words,
+            transitions,
         )
 
-        # ----------------------------------------------------
-        # STEP 4
-        #
-        # Apply transition ownership.
-        # ----------------------------------------------------
-
+        # Assign the first word after each transition
+        # to the new speaker.
         self._apply_transition_ownership(
             refined_transitions
         )
 
-        # ----------------------------------------------------
-        # STEP 5
-        #
-        # Apply the first-word correction.
-        #
-        # This handles the case where:
-        #
-        # speaker 1:
-        #     ...
-        #
-        # speaker 2:
-        #     I thought ...
-        #
-        # but diarization places the boundary at the
-        # end of "I".
-        # ----------------------------------------------------
-
+        # Handle the case where the transition occurs
+        # exactly at the end of the first word spoken
+        # by the new speaker.
         self._correct_first_word_ownership(
             refined_transitions
         )
 
-        # ----------------------------------------------------
-        # STEP 6
-        #
-        # Convert internal words into AlignedWord objects.
-        # ----------------------------------------------------
-
-        aligned = []
-
-        for word in words:
-
-            if word["speaker"] is None:
-                continue
-
-            aligned.append(
-                AlignedWord(
-                    word=word["text"],
-                    start_ms=word["start_ms"],
-                    end_ms=word["end_ms"],
-                    speaker_id=word["speaker"],
-                )
+        return [
+            AlignedWord(
+                word=word["text"],
+                start_ms=word["start_ms"],
+                end_ms=word["end_ms"],
+                speaker_id=word["speaker"],
             )
-
-        return aligned
+            for word in words
+            if word["speaker"] is not None
+        ]
 
     # ========================================================
     # WHISPER WORD EXTRACTION
@@ -138,26 +87,18 @@ class WordAligner:
                 [],
             ):
 
-                start = word_data.get(
-                    "start"
-                )
-
-                end = word_data.get(
-                    "end"
-                )
-
+                start = word_data.get("start")
+                end = word_data.get("end")
                 text = word_data.get(
                     "word",
                     "",
                 ).strip()
 
-                if start is None:
-                    continue
-
-                if end is None:
-                    continue
-
-                if not text:
+                if (
+                    start is None
+                    or end is None
+                    or not text
+                ):
                     continue
 
                 words.append(
@@ -176,7 +117,7 @@ class WordAligner:
         return words
 
     # ========================================================
-    # INITIAL MIDPOINT ASSIGNMENT
+    # INITIAL SPEAKER ASSIGNMENT
     # ========================================================
 
     @staticmethod
@@ -194,8 +135,6 @@ class WordAligner:
                 + word["end_ms"]
             ) / 2
 
-            word["speaker"] = None
-
             for (
                 speaker_start_ms,
                 speaker_end_ms,
@@ -207,26 +146,14 @@ class WordAligner:
                     <= midpoint
                     < speaker_end_ms
                 ):
-
-                    word["speaker"] = (
-                        speaker_id
-                    )
-
+                    word["speaker"] = speaker_id
                     break
-
-            # ----------------------------------------------------
-            # FALLBACK
-            #
-            # The word's midpoint didn't land inside any
-            # diarization segment (usually because it's a
-            # pause/gap between turns, not real silence).
-            # Instead of dropping the word, assign it to
-            # whichever segment is closest in time.
-            # ----------------------------------------------------
 
             if word["speaker"] is not None:
                 continue
 
+            # If the midpoint falls outside every
+            # diarization segment, use the closest segment.
             best_speaker = None
             best_distance = None
 
@@ -236,16 +163,16 @@ class WordAligner:
                 speaker_id,
             ) in diarization_segments:
 
-                # distance from midpoint to this segment
-                # (0 if midpoint is inside it, which
-                # shouldn't happen here since we already
-                # checked that above)
                 if midpoint < speaker_start_ms:
-                    distance = speaker_start_ms - midpoint
-                elif midpoint >= speaker_end_ms:
-                    distance = midpoint - speaker_end_ms
+                    distance = (
+                        speaker_start_ms
+                        - midpoint
+                    )
                 else:
-                    distance = 0
+                    distance = (
+                        midpoint
+                        - speaker_end_ms
+                    )
 
                 if (
                     best_distance is None
@@ -255,6 +182,7 @@ class WordAligner:
                     best_speaker = speaker_id
 
             word["speaker"] = best_speaker
+
     # ========================================================
     # FIND SPEAKER TRANSITIONS
     # ========================================================
@@ -281,20 +209,11 @@ class WordAligner:
             segments[1:],
         ):
 
-            previous_start_ms = previous[0]
-            previous_end_ms = previous[1]
             previous_speaker = previous[2]
-
             current_start_ms = current[0]
-            current_end_ms = current[1]
             current_speaker = current[2]
 
-            # Silence/gap between same-speaker segments
-            # is not a speaker transition.
-            if (
-                previous_speaker
-                == current_speaker
-            ):
+            if previous_speaker == current_speaker:
                 continue
 
             transitions.append(
@@ -337,10 +256,8 @@ class WordAligner:
 
             if (
                 best is None
-                or distance_ms
-                < best["distance_ms"]
+                or distance_ms < best["distance_ms"]
             ):
-
                 best = {
                     "boundary_ms": boundary_ms,
                     "left_word": left,
@@ -348,11 +265,9 @@ class WordAligner:
                     "distance_ms": distance_ms,
                 }
 
-        if best is None:
-            return None
-
         if (
-            best["distance_ms"]
+            best is None
+            or best["distance_ms"]
             > cls.MAX_BOUNDARY_DISTANCE_MS
         ):
             return None
@@ -360,7 +275,7 @@ class WordAligner:
         return best
 
     # ========================================================
-    # FIND WORDS AROUND TRANSITION
+    # WORDS AROUND TRANSITION
     # ========================================================
 
     @staticmethod
@@ -386,8 +301,6 @@ class WordAligner:
             ),
         )
 
-        # Same idea as the test script, but we don't
-        # actually need to restrict this too aggressively.
         start = max(
             0,
             closest_index - 6,
@@ -415,22 +328,16 @@ class WordAligner:
 
         for transition in transitions:
 
-            transition_ms = (
-                transition["time_ms"]
+            transition_ms = transition["time_ms"]
+
+            context = cls._words_around_transition(
+                words,
+                transition_ms,
             )
 
-            context = (
-                cls._words_around_transition(
-                    words,
-                    transition_ms,
-                )
-            )
-
-            boundary = (
-                cls._find_best_word_boundary(
-                    context,
-                    transition_ms,
-                )
+            boundary = cls._find_best_word_boundary(
+                context,
+                transition_ms,
             )
 
             if boundary is None:
@@ -439,20 +346,12 @@ class WordAligner:
             refined.append(
                 {
                     "transition_ms": transition_ms,
-                    "boundary_ms": boundary[
-                        "boundary_ms"
-                    ],
+                    "boundary_ms": boundary["boundary_ms"],
                     "from": transition["from"],
                     "to": transition["to"],
-                    "left_word": boundary[
-                        "left_word"
-                    ],
-                    "right_word": boundary[
-                        "right_word"
-                    ],
-                    "distance_ms": boundary[
-                        "distance_ms"
-                    ],
+                    "left_word": boundary["left_word"],
+                    "right_word": boundary["right_word"],
+                    "distance_ms": boundary["distance_ms"],
                 }
             )
 
@@ -469,18 +368,8 @@ class WordAligner:
 
         for transition in transitions:
 
-            new_speaker = transition[
-                "to"
-            ]
-
-            right_word = transition[
-                "right_word"
-            ]
-
-            # The first Whisper word after the refined
-            # boundary belongs to the new speaker.
-            right_word["speaker"] = (
-                new_speaker
+            transition["right_word"]["speaker"] = (
+                transition["to"]
             )
 
     # ========================================================
@@ -494,103 +383,12 @@ class WordAligner:
 
         for transition in transitions:
 
-            boundary_ms = transition[
-                "boundary_ms"
-            ]
+            left_word = transition["left_word"]
+            right_word = transition["right_word"]
+            boundary_ms = transition["boundary_ms"]
+            new_speaker = transition["to"]
 
-            new_speaker = transition[
-                "to"
-            ]
+            if left_word["end_ms"] == boundary_ms:
 
-            left_word = transition[
-                "left_word"
-            ]
-
-            right_word = transition[
-                "right_word"
-            ]
-
-            # If the diarization boundary falls exactly
-            # at the end of the left Whisper word, then
-            # the experimental rule says that this left
-            # word may actually be the first word of the
-            # new speaker.
-            #
-            # Example:
-            #
-            # speaker 1:
-            #     ... yet
-            #
-            # speaker 2:
-            #     I thought ...
-            #
-            # Whisper:
-            #
-            #     I       10540 -> 11540
-            #     thought 11540 -> 11760
-            #
-            # Diarization:
-            #
-            #     speaker transition = 11540
-            #
-            # Therefore:
-            #
-            #     I       -> speaker 2
-            #     thought -> speaker 2
-
-            if (
-                left_word["end_ms"]
-                == boundary_ms
-            ):
-
-                left_word["speaker"] = (
-                    new_speaker
-                )
-
-                right_word["speaker"] = (
-                    new_speaker
-                )
-
-    # ========================================================
-    # LEGACY BEST-OVERLAP HELPER
-    # ========================================================
-
-    @staticmethod
-    def _find_best_speaker(
-        word_start_ms: int,
-        word_end_ms: int,
-        diarization_segments: list[
-            tuple[int, int, int]
-        ],
-    ) -> int | None:
-
-        best_speaker = None
-        best_overlap = 0
-
-        for (
-            speaker_start_ms,
-            speaker_end_ms,
-            speaker_id,
-        ) in diarization_segments:
-
-            overlap_start = max(
-                word_start_ms,
-                speaker_start_ms,
-            )
-
-            overlap_end = min(
-                word_end_ms,
-                speaker_end_ms,
-            )
-
-            overlap = max(
-                0,
-                overlap_end - overlap_start,
-            )
-
-            if overlap > best_overlap:
-
-                best_overlap = overlap
-                best_speaker = speaker_id
-
-        return best_speaker
+                left_word["speaker"] = new_speaker
+                right_word["speaker"] = new_speaker
