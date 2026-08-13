@@ -1,11 +1,11 @@
 from pathlib import Path
 
-from lma.schemas import AudioChunk
+from lma.core.schemas import AudioChunk
 from lma.transcription.diarizer import Diarizer
 from lma.transcription.speaker_manager import SpeakerManager
 from lma.transcription.whisper_transcriber import WhisperTranscriber
 from lma.transcription.word_aligner import WordAligner
-from lma.constants import ChunkReason
+from lma.core.constants import ChunkReason
 from lma.transcription.cache import get_model_snapshot_path
 
 # ---------------------------------------------------------

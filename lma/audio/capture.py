@@ -1,8 +1,8 @@
 import subprocess
 
-from lma.constants import (CHANNELS,SAMPLE_RATE,FRAME_BYTES,READ_SIZE,)
+from lma.core.constants import (CHANNELS,SAMPLE_RATE,FRAME_BYTES,READ_SIZE,)
 
-from lma.exceptions import FFmpegError
+from lma.core.exceptions import FFmpegError
 
 
 class FFmpegCapture:

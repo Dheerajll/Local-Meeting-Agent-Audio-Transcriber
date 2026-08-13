@@ -2,7 +2,7 @@ import json
 import shutil
 from datetime import datetime
 from pathlib import Path
-from .paths import (create_session_dir)
+from ..core.paths import (create_session_dir)
 
 
 

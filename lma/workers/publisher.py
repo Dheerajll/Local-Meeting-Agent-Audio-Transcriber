@@ -1,5 +1,5 @@
 
-from ..schemas import AudioChunk,TranscriptChunk
+from ..core.schemas import AudioChunk,TranscriptChunk
 from typing import Generic, TypeVar
 from queue import Queue
 

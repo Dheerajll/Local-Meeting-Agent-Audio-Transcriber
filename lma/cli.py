@@ -1,11 +1,11 @@
 import sys
 
 from .setup import run_setup
-from .auth import login
+from .browser.auth import login
 from .browser import BrowserManager
 from lma.audio.recorder import AudioRecorder
 from lma.workers.publisher import ChunkPublisher
-from lma.queues import transcription_queue
+from lma.core.queues import transcription_queue
 def main():
 
     if len(sys.argv) < 2:

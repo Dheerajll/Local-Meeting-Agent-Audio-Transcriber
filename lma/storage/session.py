@@ -1,7 +1,7 @@
 from pathlib import Path
 import shutil
 
-from lma.schemas import SessionPaths
+from lma.core.schemas import SessionPaths
 
 
 class SessionManager:

@@ -1,6 +1,6 @@
 from lma.audio.capture import FFmpegCapture
 from lma.audio.clock import AudioClock
-from lma.schemas import PCMFrame
+from lma.core.schemas import PCMFrame
 
 
 class AudioSource:

@@ -1,7 +1,7 @@
 from pathlib import Path
 import platform
 from  datetime import datetime
-from lma.schemas import SessionPaths
+from lma.core.schemas import SessionPaths
 APP_NAME = "local-meeting-agent"
 
 def get_cache_dir():

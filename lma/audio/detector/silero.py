@@ -2,14 +2,14 @@ import numpy as np #type:ignore
 import torch #type:ignore
 from silero_vad import load_silero_vad, VADIterator #type:ignore
 
-from lma.constants import (
+from lma.core.constants import (
     SAMPLE_RATE,
     VAD_MIN_SILENCE_MS,
     VAD_SPEECH_PAD_MS,
     VAD_THRESHOLD,
     SpeechEvent,
 )
-from lma.schemas import PCMFrame
+from lma.core.schemas import PCMFrame
 
 from lma.audio.detector.base import SpeechDetector
 

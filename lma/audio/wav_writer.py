@@ -1,7 +1,7 @@
 from pathlib import Path
 import wave
 
-from lma.schemas import AudioChunk
+from lma.core.schemas import AudioChunk
 from datetime import datetime
 
 class WavWriter:

@@ -3,9 +3,9 @@ from lma.audio.chunk_buffer import ChunkBuffer
 from lma.audio.chunk_builder import ChunkBuilder
 from lma.workers.publisher import ChunkPublisher
 
-from lma.schemas import (AudioChunk,PCMFrame,)
+from lma.core.schemas import (AudioChunk,PCMFrame,)
 
-from lma.constants import (RecorderState,SpeechEvent,
+from lma.core.constants import (RecorderState,SpeechEvent,
 SOFT_LIMIT_MS,HARD_LIMIT_MS,FINALIZE_SILENCE_MS,
 CHANNELS,SAMPLE_RATE,ChunkReason,FRAME_DURATION_MS
 )

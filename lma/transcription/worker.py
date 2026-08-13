@@ -2,7 +2,7 @@ from pathlib import Path
 from queue import Empty, Queue
 from threading import Event, Thread
 
-from lma.schemas import AudioChunk
+from lma.core.schemas import AudioChunk
 
 from lma.audio.wav_writer import WavWriter
 from lma.transcription.whisper_transcriber import WhisperTranscriber

@@ -1,4 +1,4 @@
-from .paths import (
+from lma.core.paths import (
     CACHE_DIR,
     MODEL_DIR,
     LOG_DIR,
@@ -16,7 +16,7 @@ from .system import (
 )
 
 from .models import setup_whisper
-from .audio_setup import check_audio_setup
+from .audio import check_audio_setup
 
 def create_directories():
 

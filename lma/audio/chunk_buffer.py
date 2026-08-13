@@ -1,10 +1,10 @@
 from lma.audio.buffer import RollingAudioBuffer
-from lma.constants import (
+from lma.core.constants import (
     SAMPLE_RATE,
     SAMPLE_WIDTH,
     OVERLAP_MS,
 )
-from lma.schemas import FinalizedChunk
+from lma.core.schemas import FinalizedChunk
 
 BYTES_PER_MS = (SAMPLE_RATE * SAMPLE_WIDTH) // 1000
 

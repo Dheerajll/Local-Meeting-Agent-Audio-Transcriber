@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from dataclasses import asdict
 
-from lma.schemas import TranscriptChunk
+from lma.core.schemas import TranscriptChunk
 
 
 class TranscriptWriter:

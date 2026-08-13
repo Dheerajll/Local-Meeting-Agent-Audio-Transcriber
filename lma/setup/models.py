@@ -2,7 +2,7 @@ import os
 
 from huggingface_hub import snapshot_download #type:ignore
 
-from .paths import HF_CACHE_DIR
+from ..core.paths import HF_CACHE_DIR
 
 
 WHISPER_REPO = (

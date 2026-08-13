@@ -1,5 +1,5 @@
-from lma.schemas import AudioChunk, FinalizedChunk
-from lma.constants import ChunkReason
+from lma.core.schemas import AudioChunk, FinalizedChunk
+from lma.core.constants import ChunkReason
 
 
 class ChunkBuilder:

@@ -1,4 +1,4 @@
-from lma.constants import FRAME_DURATION_MS
+from lma.core.constants import FRAME_DURATION_MS
 
 class AudioClock:
     """

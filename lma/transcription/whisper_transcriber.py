@@ -5,7 +5,7 @@ from pathlib import Path
 
 import mlx_whisper
 
-from lma.schemas import AudioChunk, TranscriptChunk
+from lma.core.schemas import AudioChunk, TranscriptChunk
 from lma.transcription.diarizer import Diarizer
 from lma.transcription.speaker_manager import SpeakerManager
 from lma.transcription.word_aligner import WordAligner

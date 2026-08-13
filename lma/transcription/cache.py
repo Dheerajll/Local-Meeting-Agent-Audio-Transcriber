@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from lma.paths import HF_CACHE_DIR
+from lma.core.paths import HF_CACHE_DIR
 
 def _find_snapshot(snapshots_dir:Path,model_name:str) -> Path:
     if not snapshots_dir.exists():

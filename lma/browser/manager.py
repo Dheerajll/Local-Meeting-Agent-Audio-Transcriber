@@ -1,6 +1,6 @@
 from playwright.sync_api import sync_playwright #type:ignore
 
-from .paths import (
+from ..core.paths import (
     BROWSER_PROFILE_DIR,
     ensure_directories
 )

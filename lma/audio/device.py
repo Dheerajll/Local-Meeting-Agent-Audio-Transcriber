@@ -1,5 +1,5 @@
 import subprocess
-from lma.exceptions import AudioDeviceError
+from lma.core.exceptions import AudioDeviceError
 
 class AudioDeviceManager:
 

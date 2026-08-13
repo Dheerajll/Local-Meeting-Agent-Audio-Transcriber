@@ -22,7 +22,7 @@ from lma.transcription.diarizer import Diarizer
 from lma.transcription.word_aligner import WordAligner
 from lma.transcription.speaker_manager import SpeakerManager
 from lma.transcription.cache import get_model_snapshot_path
-from lma.paths import create_session_dir
+from lma.core.paths import create_session_dir
 
 
 # --------------------------------------------------

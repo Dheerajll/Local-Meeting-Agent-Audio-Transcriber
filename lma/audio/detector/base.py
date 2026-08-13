@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from lma.constants import SpeechEvent
-from lma.schemas import PCMFrame
+from lma.core.constants import SpeechEvent
+from lma.core.schemas import PCMFrame
 
 class SpeechDetector(ABC):
     """
