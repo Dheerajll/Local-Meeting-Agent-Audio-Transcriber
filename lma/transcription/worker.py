@@ -1,6 +1,6 @@
 from pathlib import Path
-from queue import Empty,Queue
-from threading import Thread, Event
+from queue import Empty, Queue
+from threading import Event, Thread
 
 from lma.schemas import AudioChunk
 
@@ -20,17 +20,33 @@ class TranscriptionWorker:
         WavWriter
             ↓
         WhisperTranscriber
+            │
+            ├── Diarizer
+            ├── SpeakerManager
+            ├── MLX Whisper
+            └── WordAligner
+            ↓
+        TranscriptChunk
             ↓
         TranscriptWriter
 
     The worker does not know anything about:
+        - diarization
+        - speaker identities
+        - word alignment
+        - Whisper
         - AudioRecorder
         - backend delivery
         - session cleanup
     """
 
-    def __init__(self,input_queue: Queue[AudioChunk],wav_writer: WavWriter,transcriber: WhisperTranscriber,
-                 transcript_writer: TranscriptWriter) -> None:
+    def __init__(
+        self,
+        input_queue: Queue[AudioChunk],
+        wav_writer: WavWriter,
+        transcriber: WhisperTranscriber,
+        transcript_writer: TranscriptWriter,
+    ) -> None:
 
         self.input_queue = input_queue
         self.wav_writer = wav_writer
@@ -69,7 +85,6 @@ class TranscriptionWorker:
 
         if self._thread is not None:
             self._thread.join()
-
             self._thread = None
 
     def _run(self) -> None:
@@ -119,11 +134,10 @@ class TranscriptionWorker:
                 )
 
             finally:
-                '''
+
                 if wav_path is not None:
                     self.wav_writer.delete(
                         wav_path
                     )
-                '''
 
                 self.input_queue.task_done()

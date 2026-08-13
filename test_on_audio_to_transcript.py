@@ -18,6 +18,9 @@ from lma.audio.wav_writer import WavWriter
 from lma.transcription.whisper_transcriber import WhisperTranscriber
 from lma.transcription.transcript_writer import TranscriptWriter
 from lma.transcription.worker import TranscriptionWorker
+from lma.transcription.diarizer import Diarizer
+from lma.transcription.word_aligner import WordAligner
+from lma.transcription.speaker_manager import SpeakerManager
 from lma.transcription.cache import get_model_snapshot_path
 from lma.paths import create_session_dir
 
@@ -75,6 +78,9 @@ MODEL_PATH = get_model_snapshot_path("mlx-community--whisper-large-v3-mlx")
 transcriber = WhisperTranscriber(
     model_path=MODEL_PATH,
     language="en",
+    diarizer=Diarizer(),
+    speaker_manager=SpeakerManager(),
+    word_aligner=WordAligner()
 )
 
 

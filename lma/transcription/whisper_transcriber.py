@@ -256,7 +256,7 @@ class WhisperTranscriber:
                 + " ".join(current_words)
             )
 
-        return "\n".join(lines)
+        return " ".join(lines)
 
     # ========================================================
     # CONFIDENCE
