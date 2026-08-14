@@ -1,87 +1,59 @@
 import sys
 
-from .setup import run_setup
-from .browser.auth import login
-from .browser import BrowserManager
-from lma.audio.recorder import AudioRecorder
-from lma.workers.publisher import ChunkPublisher
-from lma.core.queues import transcription_queue
+
 def main():
-
     if len(sys.argv) < 2:
-
-        print(
-            """
-        Usage:
-        lma setup
-        lma login
-        lma join <meeting_url>
-            """
-        )
-
+        print("""
+Usage:
+  lma setup
+  lma login
+  lma join <meeting_url> [--lang=en] [--session=abc]
+        """)
         return
-
 
     command = sys.argv[1]
 
-
     if command == "setup":
+        from .setup.runner import run_setup
         run_setup()
 
-
     elif command == "login":
+        from .browser.auth import login
         login()
 
-
     elif command == "join":
-
         if len(sys.argv) < 3:
-
-            print(
-                "Usage: lma join <meeting_url>"
-            )
-
+            print("Usage: lma join <meeting_url> [--lang=en]")
             return
-
 
         meeting_url = sys.argv[2]
 
+        # Parse optional flags
+        language = None
+        session_id = None
+        for arg in sys.argv[3:]:
+            if arg.startswith("--lang="):
+                language = arg.split("=", 1)[1]
+            elif arg.startswith("--session="):
+                session_id = arg.split("=", 1)[1]
 
-        browser = BrowserManager()
+        from .orchestration.orchestrator import MeetingOrchestrator
 
-        try:
-
-            browser.start()
-
-            browser.join_meeting(
-                meeting_url
-            )
-
-
-            input(
-                "Press ENTER to close..."
-            )
-
-
-        finally:
-
-            browser.close()
-    
-    elif command == "record":
-
-        '''
-        recorder = AudioRecorder(ChunkPublisher(transcription_queue))
+        orchestrator = MeetingOrchestrator(
+            meeting_url=meeting_url,
+            session_id=session_id,
+            language=language,
+        )
 
         try:
-            recorder.start()
-
+            orchestrator.run()
         except KeyboardInterrupt:
-
-            recorder.stop()
-        '''
+            print("\n⚠️  Interrupted.")
+            orchestrator.stop()
 
     else:
+        print(f"Unknown command: {command}")
 
-        print(
-            f"Unknown command: {command}"
-        )
+
+if __name__ == "__main__":
+    main()
