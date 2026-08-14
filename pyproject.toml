@@ -1,18 +1,36 @@
 [project]
 name = "local-meeting-agent"
 version = "0.1.0"
-description = "Local Meeting Agent"
+description = "Local Meeting Agent (MeetQ)"
 requires-python = ">=3.11"
 
 dependencies = [
+    # --- Core AI & Audio ---
     "mlx-whisper",
     "mlx",
     "numpy",
     "torch",
     "silero-vad",
+    "pyannote.audio",      # <--- ADDED: Required for speaker diarization
+    
+    # --- Browser Automation ---
     "playwright",
-    "huggingface_hub"
+    
+    # --- Model Management ---
+    "huggingface_hub",
+    
+    # --- Backend Communication (Upcoming) ---
+    "websockets",          # <--- ADDED: For streaming chunks to FastAPI via WS
+    "httpx",               # <--- ADDED: For REST API calls (auth, meeting status)
+    
+    # --- Configuration ---
+    "python-dotenv",       # <--- ADDED: For loading backend URL/secrets from .env
 ]
 
 [project.scripts]
 lma = "lma.cli:main"
+
+# Optional: If you use build systems like hatchling or setuptools
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
