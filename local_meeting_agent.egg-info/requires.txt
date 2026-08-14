@@ -1,5 +1,11 @@
 mlx-whisper
+mlx
 numpy
 torch
 silero-vad
+pyannote.audio
 playwright
+huggingface_hub
+websockets
+httpx
+python-dotenv
