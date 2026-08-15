@@ -4,3 +4,5 @@ test_chunks
 test_transcripts
 
 local_meeting_agent.egg-info
+
+test.txt

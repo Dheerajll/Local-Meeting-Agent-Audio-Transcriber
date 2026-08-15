@@ -46,13 +46,14 @@ class TranscriptionWorker:
         wav_writer: WavWriter,
         transcriber: WhisperTranscriber,
         transcript_writer: TranscriptWriter,
+        uploader = None
     ) -> None:
 
         self.input_queue = input_queue
         self.wav_writer = wav_writer
         self.transcriber = transcriber
         self.transcript_writer = transcript_writer
-
+        self.uploader = uploader
         self._stop_event = Event()
         self._thread: Thread | None = None
 
@@ -125,6 +126,9 @@ class TranscriptionWorker:
                 print(
                     f"📝 Transcript saved: {path}"
                 )
+                # NEW: Stream to backend if uploader is configured
+                if self.uploader is not None:
+                    self.uploader.upload(transcript)
 
             except Exception as exc:
 

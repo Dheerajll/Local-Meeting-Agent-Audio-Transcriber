@@ -1,167 +1,26 @@
-                   FFmpeg
-                      │
-                      ▼
-              Continuous PCM
-                      │
-                      ▼
-                Rolling Buffer
-                      │
-                      ▼
-                  Silero VAD
-                      │
-                      ▼
-            Recorder State Machine
-                      │
-        ┌─────────────┴─────────────┐
-        │                           │
-        ▼                           ▼
-  Recording Buffer           Chunk Metadata
-        │                           │
-        └─────────────┬─────────────┘
-                      ▼
-              Storage Manager
-                      │
-                      ▼
-                 Chunk Queue
-                      │
-                      ▼
-               Whisper Worker
-                      │
-                      ▼
-               Transcript Queue
-                      │
-                      ▼
-                Backend Upload
-                      │
-                      ▼
-                 Backend ACK
-                      │
-                      ▼
-                 Delete Audio
+Phase 1: Backend Foundation
+  ├── Google OAuth login
+  ├── Database models (User, Meeting, Transcript)
+  ├── WebSocket endpoint for LMA
+  └── Basic transcript storage
 
+Phase 2: LMA Networking
+  ├── WebSocket client in LMA
+  ├── Stream chunks to backend
+  └── Handle ACKs and errors
 
+Phase 3: AI Pipelines
+  ├── Transcript cleaning (LLM)
+  ├── Hierarchical summarization
+  └── RAG (embeddings + FAISS + retrieval)
 
-lma/
-│
-├── audio/
-│   ├── capture.py
-│   ├── source.py
-│   ├── clock.py
-│   ├── detector/
-│   │   ├── base.py
-│   │   └── silero.py
-│   ├── recorder.py
-│   ├── buffer.py
-│   ├── chunk_buffer.py
-│   ├── chunk_builder.py
-│   └── device.py
-│
-├── transcription/
-│   ├── worker.py
-│   ├── model.py
-│   └── processor.py
-│
-├── workers/
-│   ├── base.py
-│   ├── publisher.py
-│   └── queue_worker.py
-│
-├── schemas.py
-├── constants.py
-└── exceptions.py
+Phase 4: Full Orchestration
+  ├── Web app triggers meeting
+  ├── Backend signals LMA daemon
+  ├── LMA runs in background
+  └── End-to-end flow
 
-
-Meeting Audio
-      │
-      ▼
-AudioRecorder
-      │
-      ▼
-AudioChunk Queue
-      │
-      ▼
-TranscriptionWorker
-      │
-      ▼
-TranscriptChunk Queue
-      │
-      ▼
-DiarizationWorker
-      │
-      ▼
-SpeakerTranscript Queue
-      │
-      ▼
-Cleaning / Translation Worker
-      │
-      ▼
-Embedding Worker
-      │
-      ▼
-Database + FAISS
-
-
-
-lma/
-│
-├── cli.py
-├── constants.py
-├── schemas.py
-├── exceptions.py
-│
-├── audio/
-│   ├── __init__.py
-│   │
-│   ├── recorder.py
-│   ├── chunk_buffer.py
-│   ├── chunk_builder.py
-│   ├── buffer.py
-│   ├── source.py
-│   ├── capture.py
-│   ├── clock.py
-│   ├── audio_device.py
-│   ├── wav_writer.py          # ← next
-│   │
-│   └── detector/
-│       ├── __init__.py
-│       ├── base.py
-│       └── silero.py
-│
-├── transcription/
-│   ├── __init__.py
-│   │
-│   ├── worker.py              # ← next
-│   ├── manager.py             # model lifecycle
-│   ├── cache.py               # locate HF snapshot
-│   ├── factory.py             # build/load model
-│   ├── whisper.py             # MLX Whisper wrapper
-│   └── exceptions.py
-│
-├── diarization/
-│   ├── __init__.py
-│   ├── worker.py
-│   ├── base.py
-│   └── pyannote.py            # or whisperx later
-│
-├── networking/
-│   ├── __init__.py
-│   ├── backend.py
-│   ├── uploader.py
-│   └── retry.py
-│
-├── browser/
-│   ├── __init__.py
-│   ├── login.py
-│   ├── meet.py
-│   └── profile.py
-│
-├── workers/
-│   ├── __init__.py
-│   ├── worker.py              # generic Worker base
-│   └── publisher.py
-│
-└── setup/
-    ├── __init__.py
-    ├── dependencies.py
-    ├── login.py
-    └── audio.py
+Phase 5: Testing & Polish
+  ├── Unit tests
+  ├── Integration tests
+  └── Evaluation (WER, ROUGE, RAG accuracy)

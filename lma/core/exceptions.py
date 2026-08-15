@@ -19,3 +19,6 @@ class BackendError(MeetingAgentError):
 class BrowserError(MeetingAgentError):
     """Raised when browser automation fails."""
     pass
+class ConfigError(MeetingAgentError):
+    """Raised when LMA configuration is missing or invalid."""
+    pass

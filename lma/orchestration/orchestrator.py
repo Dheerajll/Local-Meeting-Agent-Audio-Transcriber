@@ -37,6 +37,8 @@ from lma.transcription.cache import get_model_snapshot_path
 from lma.browser.manager import BrowserManager
 from lma.workers.publisher import ChunkPublisher
 
+from lma.networking.uploader import ChunkUploader
+
 # Configuration
 BLACKHOLE_INPUT_DEVICE = "BlackHole 2ch"
 RECORDING_OUTPUT_DEVICE = "Local meeting agent output"
@@ -150,11 +152,16 @@ class MeetingOrchestrator:
 
         # 3. Start transcription worker thread
         print("🧵 Starting transcription worker...")
+
+        self.uploader = ChunkUploader(meeting_id=self.session_id)
+        self.uploader.start()
+
         self.worker = TranscriptionWorker(
             input_queue=self.chunk_queue,
             wav_writer=wav_writer,
             transcriber=transcriber,
             transcript_writer=transcript_writer,
+            uploader=self.uploader
         )
         self.worker.start()
 
@@ -347,11 +354,16 @@ class MeetingOrchestrator:
         self.chunk_queue.join()
         print("   ✓ All chunks transcribed")
 
+
         # Phase 4: Stop the worker
         if self.worker is not None:
             print("   Stopping transcription worker...")
             self.worker.stop()
 
+        if hasattr(self, 'uploader') and self.uploader is not None:
+            print("   Stopping chunk uploader...")
+            self.uploader.stop()
+            
         # Phase 5: Summary
         self._print_summary()
         print("\n✅ Orchestrator shutdown complete.")
