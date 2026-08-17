@@ -145,24 +145,25 @@ def _verify_token():
 
 def _handle_join():
     if len(sys.argv) < 3:
-        print("Usage: lma join <meeting_url> [--lang=en]")
+        print("Usage: lma join <meeting_url> [--meeting-id=123] [--lang=en]")
         return
 
     meeting_url = sys.argv[2]
 
     language = None
-    session_id = None
+    backend_meeting_id = None  # <-- NEW
+    
     for arg in sys.argv[3:]:
         if arg.startswith("--lang="):
             language = arg.split("=", 1)[1]
-        elif arg.startswith("--session="):
-            session_id = arg.split("=", 1)[1]
+        elif arg.startswith("--meeting-id="):
+            backend_meeting_id = int(arg.split("=", 1)[1]) # <-- NEW
 
     from lma.orchestration.orchestrator import MeetingOrchestrator
 
     orchestrator = MeetingOrchestrator(
         meeting_url=meeting_url,
-        session_id=session_id,
+        backend_meeting_id = backend_meeting_id,  # <-- NEW
         language=language,
     )
 

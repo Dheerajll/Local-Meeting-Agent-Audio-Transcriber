@@ -56,6 +56,7 @@ class MeetingOrchestrator:
         self,
         meeting_url: str,
         session_id: str | None = None,
+        backend_meeting_id: int | None = None, # <-- NEW
         language: str | None = None,
     ):
         self.meeting_url = meeting_url
@@ -72,6 +73,7 @@ class MeetingOrchestrator:
         self.chunk_queue: queue.Queue = queue.Queue()
         self._stop_event = threading.Event()
 
+        self.backend_meeting_id = backend_meeting_id
         # Track why the meeting ended (for the summary)
         self._end_reason: str = ""
 
@@ -153,7 +155,7 @@ class MeetingOrchestrator:
         # 3. Start transcription worker thread
         print("🧵 Starting transcription worker...")
 
-        self.uploader = ChunkUploader(meeting_id=self.session_id)
+        self.uploader = ChunkUploader(meeting_id=str(self.backend_meeting_id))
         self.uploader.start()
 
         self.worker = TranscriptionWorker(
@@ -363,7 +365,7 @@ class MeetingOrchestrator:
         if hasattr(self, 'uploader') and self.uploader is not None:
             print("   Stopping chunk uploader...")
             self.uploader.stop()
-            
+
         # Phase 5: Summary
         self._print_summary()
         print("\n✅ Orchestrator shutdown complete.")
