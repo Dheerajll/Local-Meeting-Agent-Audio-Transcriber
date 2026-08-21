@@ -198,7 +198,7 @@ class MeetingOrchestrator:
 
         last_check_ms = 0
 
-        for frame in self.source.frames():
+        for frame in self.source.frames(): #type:ignore
             # External stop signal
             if self._stop_event.is_set():
                 print("\n⏹️  Stop signal received.")
@@ -331,33 +331,47 @@ class MeetingOrchestrator:
     def _shutdown(self) -> None:
         print("\n🧹 Shutting down...")
 
-        # Phase 1: Stop producing new data
+        # ──────────────────────────────────────────────
+        # Phase 1: Stop producing new data (instant)
+        # ──────────────────────────────────────────────
         if self.source is not None:
             print("   Stopping audio capture...")
             self.source.stop()
 
-        # Phase 2: Give the user their system back immediately
+        # ──────────────────────────────────────────────
+        # Phase 2: Give the user their audio back IMMEDIATELY
+        # (This is what they care about most)
+        # ──────────────────────────────────────────────
         if self.audio_device_manager is not None:
             print("   Restoring audio device...")
             self.audio_device_manager.stop_recording_mode()
 
+        # Small delay — let macOS finish CoreAudio reconfiguration
+        # before we start tearing down heavy resources
+        time.sleep(1.0)
+
+        # ──────────────────────────────────────────────
+        # Phase 3: Close browser (heavy, but isolated)
+        # ──────────────────────────────────────────────
         if self.browser is not None:
             print("   Closing browser...")
             self.browser.close()
 
-        # Phase 3: Wait for transcription to finish
+        # Let the OS reclaim Chrome's memory before we release models
+        time.sleep(1.0)
+
+        # ──────────────────────────────────────────────
+        # Phase 4: Wait for transcription to finish
+        # ──────────────────────────────────────────────
         pending = self.chunk_queue.qsize()
         if pending > 0:
-            print(
-                f"   ⏳ Waiting for {pending} chunk(s) "
-                f"to transcribe..."
-            )
+            print(f"   ⏳ Waiting for {pending} chunk(s) to transcribe...")
+            self.chunk_queue.join()
+            print("   ✓ All chunks transcribed")
 
-        self.chunk_queue.join()
-        print("   ✓ All chunks transcribed")
-
-
-        # Phase 4: Stop the worker
+        # ──────────────────────────────────────────────
+        # Phase 5: Stop worker (releases Whisper + Pyannote models)
+        # ──────────────────────────────────────────────
         if self.worker is not None:
             print("   Stopping transcription worker...")
             self.worker.stop()
@@ -366,7 +380,13 @@ class MeetingOrchestrator:
             print("   Stopping chunk uploader...")
             self.uploader.stop()
 
-        # Phase 5: Summary
+        # ──────────────────────────────────────────────
+        # Phase 6: Explicitly release model memory
+        # (Force GC to run now, not later during next meeting)
+        # ──────────────────────────────────────────────
+        import gc
+        gc.collect()
+
         self._print_summary()
         print("\n✅ Orchestrator shutdown complete.")
 
