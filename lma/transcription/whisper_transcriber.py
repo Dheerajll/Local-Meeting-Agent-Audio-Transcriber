@@ -73,12 +73,25 @@ class WhisperTranscriber:
         # Run Whisper.
         # ----------------------------------------------------
 
+        if self.language == "ne":
+            temperature=0.1
+            compression_ratio_threshold=1.8
+            logprob_threshold=-0.8
+        else:
+            temperature=0.0
+            compression_ratio_threshold=0
+            logprob_threshold=0
+        
         whisper_result = mlx_whisper.transcribe(
             str(audio_path),
             path_or_hf_repo=str(self.model_path),
+            task="transcribe", 
             language=self.language,
-            temperature=0.0,
-            condition_on_previous_text=True,
+            
+            temperature=temperature,
+            compression_ratio_threshold=compression_ratio_threshold,
+            logprob_threshold=logprob_threshold,
+            condition_on_previous_text=False,
             word_timestamps=True,
         )
 
