@@ -1,14 +1,5 @@
 """
 Daemon service — main loop and lifecycle management.
-
-Orchestrates the daemon's lifecycle:
-    connect → wait for command → ack → disconnect
-    → run meeting → reconnect → repeat
-
-Handles:
-- Configuration validation
-- Reconnection with exponential backoff
-- Graceful shutdown
 """
 
 import asyncio
@@ -21,22 +12,14 @@ from lma.daemon.connection import DaemonConnection
 from lma.daemon.runner import run_meeting
 
 # Reconnection settings
-INITIAL_RECONNECT_DELAY = 2.0       # First retry after 2 seconds
-MAX_RECONNECT_DELAY = 60.0          # Cap retries at 60 seconds
-RECONNECT_BACKOFF_FACTOR = 2.0      # Double delay each attempt
+INITIAL_RECONNECT_DELAY = 2.0
+MAX_RECONNECT_DELAY = 60.0
+RECONNECT_BACKOFF_FACTOR = 2.0
 
 
 class DaemonService:
     """
     Main daemon service.
-
-    Runs a simple loop:
-        1. Connect to backend control WebSocket
-        2. Wait for join_meeting command
-        3. Disconnect
-        4. Run the meeting (blocking)
-        5. Reconnect
-        6. Repeat
     """
 
     def __init__(self):
@@ -57,18 +40,31 @@ class DaemonService:
                 command = await self._connection.connect_and_wait_for_command()
 
                 if command is None:
-                    # Connection closed without a command — retry
                     continue
 
                 # Successful connection: reset backoff
                 reconnect_delay = INITIAL_RECONNECT_DELAY
 
-                # Step 4: Run the meeting (blocking)
+                # Extract command details
                 meeting_id = command.get("meeting_id")
                 meeting_url = command.get("meeting_url")
                 language = command.get("language", "en")
 
-                run_meeting(meeting_id, meeting_url, language)
+                # ──────────────────────────────────────────────
+                # FIX: Run the meeting in a separate thread
+                # ──────────────────────────────────────────────
+                # Playwright's Sync API refuses to run inside an active
+                # asyncio event loop. By using run_in_executor, we run
+                # the blocking orchestrator in a thread pool thread,
+                # which has no event loop — so Playwright works fine.
+                loop = asyncio.get_running_loop()
+                await loop.run_in_executor(
+                    None,
+                    run_meeting,
+                    meeting_id,
+                    meeting_url,
+                    language,
+                )
 
                 print("🔄 Reconnecting to backend...\n")
 
@@ -105,15 +101,10 @@ class DaemonService:
         self._running = False
 
 
-# ──────────────────────────────────────────────
-# Entry point
-# ──────────────────────────────────────────────
-
 def run_daemon() -> None:
     """Entry point for the `lma daemon` CLI command."""
     config = load_config()
 
-    # Validate configuration before starting
     if not config.lma_token:
         print("✗ LMA token not configured.")
         print("  Run: lma config set-token <token>")
