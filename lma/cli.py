@@ -21,6 +21,10 @@ def main():
 
     elif command == "join":
         _handle_join()
+    
+    elif command == "daemon":
+        from lma.daemon import run_daemon
+        run_daemon()
 
     else:
         print(f"Unknown command: {command}")
@@ -37,8 +41,8 @@ Usage:
   lma config show                    Show current configuration
   lma config verify                  Verify token with backend
   lma join <meeting_url>             Join and record a meeting
-    """)
-
+  lma daemon                         Start daemon (listens for backend commands)
+""")
 
 def _handle_config():
     if len(sys.argv) < 3:
