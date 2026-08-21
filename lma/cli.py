@@ -110,7 +110,7 @@ def _handle_config():
 
 def _verify_token():
     """Ping the backend to verify the token is valid."""
-    import httpx
+    import httpx #type:ignore
     from lma.core.config import load_config
     from lma.core.exceptions import ConfigError
 
