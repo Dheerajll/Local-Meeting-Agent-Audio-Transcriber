@@ -3,7 +3,7 @@ from __future__ import annotations
 from math import exp
 from pathlib import Path
 
-import mlx_whisper
+import mlx_whisper #type:ignore
 
 from lma.core.schemas import AudioChunk, TranscriptChunk
 from lma.transcription.diarizer import Diarizer
@@ -193,15 +193,15 @@ class WhisperTranscriber:
             self.language,
         )
 
-        return TranscriptChunk(
-            chunk_id=chunk.chunk_id,
-            raw_text=text,
-            confidence=confidence,
-            language=language,
-            start_ms=chunk.start_ms,
-            end_ms=chunk.end_ms,
-            reason=chunk.reason,
-            forced=chunk.forced,
+        return TranscriptChunk( #type:ignore
+            chunk_id=chunk.chunk_id, #type:ignore
+            raw_text=text, #type:ignore
+            confidence=confidence, #type:ignore
+            language=language, #type:ignore
+            start_ms=chunk.start_ms, #type:ignore
+            end_ms=chunk.end_ms, #type:ignore
+            reason=chunk.reason, #type:ignore
+            forced=chunk.forced, #type:ignore
         )
 
     # ========================================================

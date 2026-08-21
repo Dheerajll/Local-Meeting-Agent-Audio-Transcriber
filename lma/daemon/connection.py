@@ -12,8 +12,8 @@ Handles:
 import asyncio
 import json
 
-import websockets
-from websockets.exceptions import ConnectionClosed
+import websockets #type:ignore
+from websockets.exceptions import ConnectionClosed #type:ignore
 
 from lma.core.config import LMAConfig
 
@@ -43,7 +43,7 @@ class DaemonConnection:
         )
         return f"{ws_url}/ws/lma/control?token={self._config.lma_token}"
 
-    async def connect_and_wait_for_command(self) -> dict | None:
+    async def connect_and_wait_for_command(self) -> dict | None: #type:ignore
         """
         Connect to the backend control WebSocket and wait for a command.
 
@@ -110,7 +110,7 @@ class DaemonConnection:
         self,
         ws,
         last_ping_time: float,
-    ) -> str | None:
+    ) -> str | None:  #type:ignore
         """
         Wait for a message with a short timeout.
         If timeout expires, send a keepalive ping if needed.

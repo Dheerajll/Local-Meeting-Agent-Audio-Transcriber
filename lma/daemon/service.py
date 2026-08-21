@@ -4,7 +4,7 @@ Daemon service — main loop and lifecycle management.
 
 import asyncio
 
-from websockets.exceptions import ConnectionClosed
+from websockets.exceptions import ConnectionClosed #type:ignore
 
 from lma.core.config import load_config
 from lma.core.exceptions import ConfigError
@@ -58,13 +58,7 @@ class DaemonService:
                 # the blocking orchestrator in a thread pool thread,
                 # which has no event loop — so Playwright works fine.
                 loop = asyncio.get_running_loop()
-                await loop.run_in_executor(
-                    None,
-                    run_meeting,
-                    meeting_id,
-                    meeting_url,
-                    language,
-                )
+                await loop.run_in_executor(None,run_meeting,meeting_id,meeting_url,language) #type:ignore
 
                 print("🔄 Reconnecting to backend...\n")
 

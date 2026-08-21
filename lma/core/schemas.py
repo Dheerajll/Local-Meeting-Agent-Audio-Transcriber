@@ -7,7 +7,7 @@ from .constants import ChunkReason
 
 import numpy as np #type:ignore
 
-@dataclass(slots=True)
+@dataclass(slots=True) #type:ignore
 class AudioChunk:
 
     chunk_id: int
@@ -34,7 +34,7 @@ class AudioChunk:
 
 
 
-@dataclass(slots=True)
+@dataclass(slots=True) #type:ignore
 class TranscriptChunk:
 
     chunk_id: int
@@ -56,7 +56,7 @@ class TranscriptChunk:
 
 
 
-@dataclass(slots=True)
+@dataclass(slots=True)#type:ignore
 class MeetingSession:
 
     session_id: str
@@ -67,7 +67,7 @@ class MeetingSession:
 
     browser_profile: Path
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True, frozen=True)#type:ignore
 class PCMFrame:
     """
     One fixed-size PCM frame produced by FFmpegCapture.
@@ -80,7 +80,8 @@ class PCMFrame:
     timestamp_ms: int
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True, frozen=True)#type:ignore
+
 class FinalizedChunk:
     """
     Immutable snapshot returned by ChunkBuffer when a chunk is finalized.
@@ -95,7 +96,7 @@ class FinalizedChunk:
     effective_duration_ms : int 
 
 
-@dataclass(slots=True)
+@dataclass(slots=True)#type:ignore
 class SessionPaths:
 
     root: Path
@@ -107,7 +108,8 @@ class SessionPaths:
     logs: Path
 
 
-@dataclass(slots=True)
+@dataclass(slots=True)#type:ignore
+
 class SpeakerSegment:
     start_ms: int
     end_ms: int
