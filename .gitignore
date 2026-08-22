@@ -7,5 +7,5 @@ local_meeting_agent.egg-info
 
 test.txt
 
-__pycache__/
+*__pycache__/
 *.pyc
